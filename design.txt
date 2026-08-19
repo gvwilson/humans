@@ -1,0 +1,401 @@
+# "Save the Humans!" — Game Design
+
+## 1. Overview
+
+"Save the Humans!" is a single-player, real-time arcade game written in JavaScript
+that runs in the browser. The player controls two zoo animals and uses them to
+guide fleeing humans to the Exit while zombies chase and infect them. The game is
+won by saving humans and lost when no humans remain to be saved.
+
+Genre: real-time grid-based action / rescue puzzle.
+Platform: web browser (desktop keyboard required).
+Tech: HTML5 Canvas, vanilla JavaScript, no build step.
+
+## 2. Backstory
+
+Zombies have attacked the city. The animals at the zoo decide to fight back by
+saving the humans. The player controls two of those animals — a Bunny and a
+Tiger — and must herd the panicking humans through the zoo to the Exit before the
+zombies turn everyone.
+
+## 3. Game Elements
+
+The game world is composed of three kinds of elements:
+
+- **Board** — a rectangular grid of squares.
+- **Terrain** — each square is either Path or Obstacle.
+- **Actors** — movable beings occupying squares on the board.
+
+Actors are:
+
+- **Human** — controlled by simple AI (flees zombies, follows bunnies).
+- **Zombie** — controlled by simple AI (chases humans, infects them).
+- **Animal** — controlled by the human player. Initially two kinds:
+  - **Bunny** — attracts and calms nearby humans.
+  - **Tiger** — scares humans away, like a zombie.
+
+## 4. Board and Terrain
+
+### 4.1 Board
+
+The board is a grid of squares, addressed by integer (row, column) coordinates.
+Default size is **20 columns × 15 rows** (configurable). Each square holds:
+
+- exactly one terrain value (Path or Obstacle), and
+- a list of zero or more actors currently occupying it.
+
+### 4.2 Terrain types
+
+- **Path** — walkable ground. All actors may move onto Path squares.
+- **Obstacle** — non-walkable. Actors may not enter these squares. Obstacles
+  represent zoo features: bushes, garbage bins, buildings, fences, benches, and
+  similar scenery.
+- **Exit** — a special Path square. It is the escape target for humans. When a
+  Human enters the Exit square, that human is saved (see §8.3).
+
+### 4.3 Connectivity
+
+- All Path squares form a single connected region; a Path square is never
+  isolated behind Obstacles.
+- The Exit square is reachable from every Path square.
+- Connectivity is enforced when a level is authored (or generated).
+
+## 5. Actors
+
+An actor is a record with:
+
+- `id` — unique identifier.
+- `type` — one of `human`, `zombie`, `bunny`, `tiger`.
+- `row`, `col` — current square.
+- Type-specific state (e.g. infection timer, petting flag, move cooldown).
+
+Multiple actors may occupy the same square. The attack and follow rules in §7
+and §8.2 depend on this.
+
+### 5.1 Human
+
+- Flees from Zombies (and from Tigers) by moving to adjacent Path squares.
+- Follows a nearby Bunny under the rules in §7.4.
+- Stops fleeing and pets a Bunny it has caught (§7.4).
+- Can be bitten and, after a timer, become a Zombie (§8).
+
+### 5.2 Zombie
+
+- Chases the nearest Human by moving toward it along Path squares.
+- Attacks a Human in the same square (§8.1).
+- Cannot be killed in the initial version.
+
+### 5.3 Animals (player-controlled)
+
+- **Bunny** — a Human in an adjacent square will follow it; a Human that catches
+  the Bunny stops to pet it instead of fleeing (§7.4).
+- **Tiger** — a Human flees from a Tiger exactly as it flees from a Zombie (§7.3).
+
+The player controls exactly two animals: one Bunny and one Tiger. These are the
+only Animal kinds in the initial release; the design is extensible to more.
+
+## 6. Movement
+
+- All movement is **orthogonal**: up, down, left, or right — never diagonal.
+- An actor moves at most **one square per movement tick**.
+- An actor may move only onto a Path or Exit square; Obstacle squares block
+  movement.
+- Actors may move onto squares already occupied by other actors (this is how
+  attacks and following/petting are triggered).
+- The Exit square behaves as a Path square for movement.
+
+### 6.1 Movement timing
+
+The simulation advances in fixed **movement ticks**. Proposed default tick rate
+is **4 ticks per second** (each tick = 250 ms). Every tick:
+
+1. Player-animal movement input is applied (§6.2).
+2. Zombies move one step (§7.1).
+3. Humans move one step (§7.2).
+4. Attacks and follow/petting interactions are resolved (§7, §8).
+
+Rendering runs at the display refresh rate independently of movement ticks
+(see §11).
+
+### 6.2 Player-animal movement
+
+- **WASD** moves one animal; **IJKL** moves the other.
+- Default mapping: **WASD = Tiger** (left hand), **IJKL = Bunny** (right hand).
+  The mapping is configurable and displayed on screen.
+- While a movement key is held, the corresponding animal attempts one square of
+  movement per tick. Diagonal input (e.g. W + D) resolves to one orthogonal step
+  by a fixed priority order (for example, vertical before horizontal), keeping
+  movement strictly orthogonal.
+- Player animals may not move onto Obstacle squares; the move is simply blocked.
+
+## 7. Actor AI
+
+### 7.1 Zombie AI — chase
+
+Each tick, a Zombie:
+
+1. Finds the nearest Human (shortest path distance along Path squares, computed
+   with breadth-first search over the walkable grid).
+2. Moves one step toward that Human along a shortest path (breaking ties by a
+   fixed rule, e.g. row then column).
+3. If multiple humans tie for nearest, any fixed tie-break is acceptable
+   (e.g. lowest id).
+
+If a Zombie already shares a square with a Human, it attacks instead of moving
+(§8.1).
+
+### 7.2 Human AI — flee
+
+Each tick, a Human that is not petting a Bunny:
+
+1. Identifies the nearest **threat**, where a threat is any Zombie **or** any
+   Tiger (the Tiger is treated identically to a Zombie for this purpose).
+2. Chooses an adjacent Path square (including the Exit square) that maximizes
+   the distance from that threat. If multiple candidates tie, prefer the one
+   that also increases distance from other threats, then fall back to a fixed
+   tie-break.
+3. Moves into the chosen square.
+
+Flee distance is computed as shortest-path distance along the walkable grid
+(not raw Manhattan distance), so fleeing is not defeated by obstacles.
+
+If no threat exists within a configurable awareness radius (or none at all), the
+Human performs a calm behavior (see §7.5).
+
+### 7.3 Tiger as a threat
+
+A Tiger is a threat to Humans in exactly the same way a Zombie is: Humans flee
+from it using the same flee calculation. The player can therefore use the Tiger
+to drive Humans in a desired direction (for example, toward the Exit), or to
+scatter them away from approaching Zombies.
+
+### 7.4 Bunny following and petting
+
+- **Following.** If a Human occupies a square orthogonally adjacent to a Bunny
+  (and is not already petting), the Human follows the Bunny: each tick, instead
+  of fleeing, it moves toward the Bunny's square along the walkable grid. If it
+  is already adjacent, following means staying adjacent as the Bunny moves.
+- **Petting.** When a Human reaches the Bunny's square (i.e. shares a square with
+  it), the Human stops and pets the Bunny. While petting:
+  - The Human does not flee from Zombies or Tigers.
+  - The Human is effectively calm and stationary (it may be modeled as remaining
+    in place, or as moving only when the Bunny moves).
+  - Petting ends if the Bunny moves away (the Human resumes following), or if
+    the Human is attacked and bitten (see §8.2).
+
+Because a petting Human ignores Zombies, leading Humans with the Bunny is the
+primary way to bring them safely to the Exit — but a Bunny-led Human can still
+be caught and bitten if a Zombie reaches the same square.
+
+### 7.5 Calm behavior
+
+When a Human has no threat and is not following or petting a Bunny, it wanders
+calmly: each tick, it moves to a random adjacent Path square (or stays put with
+some probability). Humans do **not** autonomously seek the Exit; reaching the
+Exit requires the player to lead or herd them. (This is a deliberate design
+choice: the rescue is the player's job.)
+
+## 8. Combat and Infection
+
+### 8.1 Zombie attack and dodge
+
+When a Zombie shares a square with a Human, the Zombie attacks:
+
+1. Each tick the Zombie is in the same square as the Human, the attack resolves.
+2. The Human attempts to **dodge** with a base probability (proposed default:
+   **50%** per attack).
+3. If the Human **dodges**, it immediately moves one square away to an adjacent
+   Path square (chosen to maximize distance from the attacking Zombie). No bite
+   occurs.
+4. If the Human **does not dodge**, the Zombie **bites** the Human.
+
+The dodge probability is per attack and does not accumulate. (If desired, the
+probability can later be made configurable per level.)
+
+### 8.2 Bite and transformation
+
+- A bitten Human enters the **bitten** state. It is marked with a visual warning
+  (see §10) and continues to move and flee normally.
+- After a fixed **infection timer** (proposed default: **5 seconds** of game
+  time), a bitten Human transforms into a Zombie.
+- When a Human transforms, it becomes a Zombie in the same square and is removed
+  from the pool of saveable Humans.
+- A biting Zombie is not destroyed or stopped by biting.
+
+### 8.3 Escaping humans
+
+- When a Human enters the Exit square, it is **saved**: it is removed from the
+  board and the saved count is incremented.
+- Saved humans are permanently safe; they cannot later become Zombies.
+
+## 9. Win, Lose, and Scoring
+
+- **Score** — the number of Humans saved.
+- **Game over** — the game ends when **no Humans remain on the board**, either
+  because every Human has escaped or every Human has transformed into a Zombie.
+- **Result** —
+  - **Win** if at least one Human was saved.
+  - **Perfect win** if every starting Human was saved.
+  - **Loss** if zero Humans were saved.
+
+The result screen shows the score (Humans saved) and offers Return to restart or
+Q to quit.
+
+## 10. Rendering
+
+All visuals are simple, flat, colored shapes drawn on an HTML5 Canvas.
+
+### 10.1 Terrain
+
+- **Path** — a light-colored filled square (e.g. light tan/white).
+- **Obstacle** — a dark, distinct filled square (e.g. dark gray/green).
+- **Exit** — a Path square with a distinct marker or border color (e.g. bright
+  green or a gate glyph).
+
+### 10.2 Actors (colored geometric markers)
+
+- **Human** — filled circle (e.g. blue).
+- **Bitten Human** — same shape with a warning color/ring (e.g. flashing
+  yellow-red) to show the infection countdown.
+- **Zombie** — filled square (e.g. dark red/green).
+- **Bunny** — small filled circle or triangle (e.g. white/light gray).
+- **Tiger** — filled diamond (e.g. orange).
+
+Each actor is drawn centered in its square. When multiple actors share a square,
+they are drawn with small offsets so all are visible.
+
+### 10.3 Heads-up display (HUD)
+
+The HUD shows, at minimum:
+
+- Saved count / total starting Humans.
+- Current game state (Playing / Paused).
+- A reminder of the control scheme (WASD = Tiger, IJKL = Bunny, Return start,
+  Escape pause, Q quit).
+
+## 11. Game Loop and Timing
+
+- **Render loop** — driven by `requestAnimationFrame`; redraws the board at the
+  display refresh rate.
+- **Simulation loop** — fixed-timestep movement ticks (default 4 per second) as
+  described in §6.1. Ticks are accumulated from elapsed wall-clock time so the
+  game speed is independent of frame rate.
+- Infection timers and any attack cooldowns are measured in game time (seconds),
+  not in frame count.
+
+## 12. Game States and Flow
+
+State machine:
+
+- **Title** — shows title and backstory. Press **Return** to start.
+- **Playing** — simulation and input active.
+- **Paused** — simulation frozen; rendering continues (with a PAUSED overlay).
+  Press **Escape** to toggle pause; **Return** to resume is optional.
+- **Game Over** — result screen. Press **Return** to restart; **Q** to quit.
+
+Keys:
+
+- **Return** — start the game (from Title), or restart (from Game Over).
+- **Escape** — pause/resume during play.
+- **Q** — quit (from Title, Pause, or Game Over).
+- **WASD** — move one animal.
+- **IJKL** — move the other animal.
+
+## 13. Technical Design
+
+### 13.1 Files
+
+Suggested minimal, no-build structure:
+
+- `index.html` — page, canvas element, and script/style includes.
+- `style.css` — page layout and HUD styling.
+- `game.js` (or split modules) — all game logic and rendering.
+
+If split, recommended modules:
+
+- `board.js` — grid, terrain, pathfinding (BFS), level definition.
+- `actors.js` — actor records, Human/Zombie/Animal behavior, infection.
+- `game.js` — game state machine, loop, input, win/lose.
+- `render.js` — canvas drawing and HUD.
+
+For simplicity, a single `game.js` is acceptable for the initial version.
+
+### 13.2 Core data structures
+
+- **Grid** — a 2D array of terrain values; each entry is `PATH`, `OBSTACLE`,
+  or `EXIT` (Exit is Path for movement purposes, flagged as the exit).
+- **Actors** — an array (or map by id) of actor records; each record holds type,
+  position, and type-specific state.
+- **Occupancy** — a derived structure (e.g. a 2D array of actor-id lists, or a
+  `Map` keyed by `"row,col"`) to quickly find actors sharing a square. It is
+  rebuilt or updated each tick after movement.
+- **Game state** — holds phase (Title/Playing/Paused/GameOver), score, tick
+  accumulator, and references to board and actors.
+
+### 13.3 Pathfinding
+
+- Movement toward/away is computed with **breadth-first search (BFS)** over the
+  walkable grid (Path and Exit squares), since BFS gives shortest paths on an
+  unweighted grid and is simple and fast enough for this board size.
+- Zombie chase: BFS from the Zombie's square; step toward the parent of the
+  nearest Human.
+- Human flee: BFS from the nearest threat; choose the adjacent square whose
+  distance is greatest. For the Tiger threat this is the same BFS as for Zombies.
+
+### 13.4 Input
+
+- `keydown`/`keyup` handlers track held keys so movement is continuous per tick.
+- Non-movement keys (Return, Escape, Q) are handled as one-shot actions on
+  `keydown`.
+- The browser's default key behavior (e.g. scrolling) is prevented for the game
+  keys.
+
+## 14. Level Definition and Configuration
+
+Initial levels are authored as ASCII maps (for readability) or as compact data,
+for example:
+
+- `.` = Path
+- `#` = Obstacle
+- `E` = Exit
+- `H` = Human spawn
+- `Z` = Zombie spawn
+- `B` = Bunny spawn (player 1)
+- `T` = Tiger spawn (player 2)
+
+A level loader validates connectivity (§4.3) before the game starts.
+
+Configurable parameters (with proposed defaults) live in one place:
+
+- Grid size (20 × 15).
+- Tick rate (4/s).
+- Dodge probability (0.5).
+- Infection timer (5 s).
+- Threat awareness radius (optional; default unlimited).
+- Animal-to-key mapping (WASD = Tiger, IJKL = Bunny).
+
+## 15. Future Extensions (out of scope for v1)
+
+- Additional animal kinds with new abilities (e.g. an animal that blocks zombies,
+  or one that heals bitten humans).
+- More complex levels with multiple exits and multiple animals.
+- Power-ups and score multipliers.
+- Sound effects and simple animation.
+- Difficulty levels (zombie speed, dodge probability, infection speed).
+
+## 16. Assumptions and Open Questions
+
+Decisions below were not stated in the plan and are proposed as sensible defaults:
+
+- **Grid size** — 20 × 15 (configurable).
+- **Tick rate** — 4 movement ticks per second.
+- **Dodge probability** — 50% per attack.
+- **Infection timer** — 5 seconds.
+- **Player animals** — exactly two, one Bunny (IJKL) and one Tiger (WASD).
+- **Calm Human behavior** — random wandering; Humans do not autonomously seek the
+  Exit (the player must lead or herd them).
+- **End condition** — game ends when no Humans remain; win if ≥ 1 saved.
+- **Rendering** — HTML5 Canvas.
+
+These are marked as defaults so they can be tuned or overridden without changing
+the core design.
