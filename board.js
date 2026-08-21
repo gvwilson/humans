@@ -181,6 +181,39 @@ function verifyConnectivity(grid, exitRow, exitCol) {
   return { pathCells, reached, connected: reached === pathCells };
 }
 
+// ---------------------------------------------------------------------------
+// randomPathSquare
+//
+// Returns a random Path square as `{ row, col }` for spawning actors
+// (design.txt §5). Only plain Path squares are considered (not the Exit),
+// though movement may enter either.
+// ---------------------------------------------------------------------------
+function randomPathSquare(grid) {
+  const path = [];
+  for (let r = 0; r < grid.length; r++) {
+    for (let c = 0; c < grid[0].length; c++) {
+      if (grid[r][c] === PATH) path.push({ row: r, col: c });
+    }
+  }
+  return path[randomInt(0, path.length - 1)];
+}
+
+// ---------------------------------------------------------------------------
+// canStep
+//
+// True if stepping from (row, col) by the orthogonal offset (dr, dc) lands on
+// an in-bounds, walkable square (Path or Exit). Obstacles and the board edge
+// block movement (design.txt §6).
+// ---------------------------------------------------------------------------
+function canStep(grid, row, col, dr, dc) {
+  const rows = grid.length;
+  const cols = grid[0].length;
+  const nr = row + dr;
+  const nc = col + dc;
+  if (nr < 0 || nr >= rows || nc < 0 || nc >= cols) return false;
+  return isWalkable(grid[nr][nc]);
+}
+
 // Expose the API to Node's `require()` when running under CommonJS; in the
 // browser, the top-level declarations above are already global to later
 // scripts.
@@ -197,5 +230,7 @@ if (typeof module !== "undefined" && module.exports) {
     generateBoard,
     verifyConnectivity,
     hasFullBlock,
+    randomPathSquare,
+    canStep,
   };
 }
