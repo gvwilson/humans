@@ -10,17 +10,18 @@
 const CELL = 32;        // pixels per square
 const MAX_SLOTS = 4;    // how many actors get individual slots before a badge
 
-// Visual style per actor type (design.txt §10.2).
+// Visual style per actor type (design.txt §10.2). The per-type style and
+// paint-order constants come from the actor modules loaded by index.html.
 const ACTOR_STYLE = {
-  bunny: { color: "#ffffff", shape: "square" },
-  tiger: { color: "#ff8c00", shape: "square" },
-  human: { color: "#3b82f6", shape: "circle" },
-  zombie: { color: "#8b1a1a", shape: "square" },
+  bunny: BUNNY_STYLE,
+  tiger: TIGER_STYLE,
+  human: HUMAN_STYLE,
+  zombie: ZOMBIE_STYLE,
 };
 
 // Paint order: earlier is drawn first (bottom layer); the most consequential
 // type ends up on top where the player can see it.
-const Z_ORDER = { bunny: 0, tiger: 1, human: 2, zombie: 3 };
+const Z_ORDER = { bunny: BUNNY_Z, tiger: TIGER_Z, human: HUMAN_Z, zombie: ZOMBIE_Z };
 
 // Offsets (px) from the cell centre for 1..4 occupants.
 const SLOTS = [
@@ -180,8 +181,8 @@ function newBoard() {
 
   const tigerPos = randomPathSquare(grid);
   const bunnyPos = randomPathSquare(grid);
-  tiger = { id: 1, type: "tiger", row: tigerPos.row, col: tigerPos.col };
-  bunny = { id: 2, type: "bunny", row: bunnyPos.row, col: bunnyPos.col };
+  tiger = makeTiger(tigerPos.row, tigerPos.col, 1);
+  bunny = makeBunny(bunnyPos.row, bunnyPos.col, 2);
   actors = [tiger, bunny];
 
   const check = verifyConnectivity(grid, exitRow, exitCol);
