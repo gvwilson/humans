@@ -1,25 +1,27 @@
 {
   "kind": "approved",
   "ids": [
-    "human-ai"
+    "endgame-tuning"
   ],
   "items": [
     {
       "_citationsMissing": true,
-      "after": "Humans move on their own `HUMAN_MOVE_INTERVAL` timer (a `humanTimer`\naccumulator like `zombieTimer`), each tick choosing one orthogonal step by\nthe first rule that applies, using Manhattan distance for ranges:\n\n- **panic** — tiger within `TIGER_PANIC_RANGE`: take a random legal step\n  (may blunder into a zombie).\n- **flee** — tiger within `TIGER_FLEE_RANGE`: take the legal step that\n  maximizes distance from the tiger.\n- **chase** — bunny within `BUNNY_CHASE_RANGE`: step toward the bunny via\n  `nextStepToward`; on catching it (shares the bunny's cell) pause for\n  `PET_DURATION` (per-human `petTimer`), letting zombies gain ground.\n- **seek exit** — default: step toward the Exit cell via `nextStepToward`.\n\nA human that reaches the Exit cell exits: remove it from `humans` and\ndestroy its sprites (no score display yet — item 8). Reuse `nextStepToward`\nfor seek and chase; add small local helpers for legal-step / flee / panic.\nNew named consts in `main.js`: `HUMAN_MOVE_INTERVAL`, `TIGER_FLEE_RANGE`,\n`TIGER_PANIC_RANGE`, `BUNNY_CHASE_RANGE`, `PET_DURATION`. `const { grid,\nexit } = generateMap()` so the Exit cell is known.",
-      "before": "Humans are static. `src/main.js` spawns and renders them and (from item 6)\ntracks each one's `infectionTimer`, but nothing ever moves them: only the\ntiger/bunny (player input) and zombies (`nextStepToward` pursuit) move.\n`generateMap()` returns `{ grid, exit }` but `main.js` destructures only\n`{ grid }`, so the Exit cell location is discarded. Tuning values live as\nmodule-level `const`s in `main.js`; `nextStepToward` is the existing BFS\npathfinding primitive (zombies already use it).",
+      "after": "- New `src/config.js` exporting one `CONFIG` object with the gameplay\n  tunables: `zombieCount`, `humanCount`, all four move intervals,\n  `infectionDelay`, `tigerFleeRange`, `tigerPanicRange`, `bunnyChaseRange`,\n  `petDuration`. Structural/rendering constants (grid dims, cell size, radii,\n  colors, key maps) stay module-level — they are not tuning values.\n- `actors.js` reads `CONFIG.zombieCount`/`humanCount` and drops its\n  `ZOMBIE_COUNT`/`HUMAN_COUNT` exports (nothing else imports them).\n- `main.js` reads every tuning value from `CONFIG`.\n- Track `saved` (humans that reached the Exit); when `humans` is empty, end\n  the game: set a `gameOver` flag, stop further movement, and show an overlay\n  with the outcome and score.\n\nWin/lose rule (the one design fork here):\n\n- **[chosen]** win if `saved > humanCount / 2` — a majority saved; else lose.\n- alt: win only if every human is saved (strict, near-impossible against 4 zombies).\n- alt: no binary verdict — show the score only.\n\n- Overlay shows \"You win/lose — saved X of N humans\" plus \"Press R to\n  restart\"; `onKeyDown(\"r\")` reloads the page for a fresh map, guarded by\n  `gameOver`.",
+      "before": "The game has no ending. Humans leave `humans` when they exit (item 7) or\nconvert to zombies (item 6), but nothing detects the empty board, no score is\ntracked, and there is no win/lose display or restart. Gameplay tunables are\nscattered: `actors.js` hardcodes `ZOMBIE_COUNT`/`HUMAN_COUNT`, and `main.js`\nholds move intervals, infection delay, and flee/panic/chase ranges as\nmodule-level `const`s — the plan's \"centralized tuning\" assumption calls for\none config object.",
       "citations": [],
       "closesIssues": [],
       "feedback": "",
       "files": [
+        "src/config.js",
         "src/main.js",
+        "src/actors.js",
         "resources/"
       ],
-      "id": "human-ai",
+      "id": "endgame-tuning",
       "status": "proposed"
     }
   ],
-  "issuedAtMs": 1792020839540,
+  "issuedAtMs": 1792021207511,
   "source": "worklist-action-command",
   "consumedAtMs": null,
   "interruptedAtMs": null,

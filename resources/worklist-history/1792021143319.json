@@ -1,0 +1,21 @@
+{
+  "description": "",
+  "items": [
+    {
+      "_citationsMissing": true,
+      "after": "- New `src/config.js` exporting one `CONFIG` object with the gameplay\n  tunables: `zombieCount`, `humanCount`, all four move intervals,\n  `infectionDelay`, `tigerFleeRange`, `tigerPanicRange`, `bunnyChaseRange`,\n  `petDuration`. Structural/rendering constants (grid dims, cell size, radii,\n  colors, key maps) stay module-level — they are not tuning values.\n- `actors.js` reads `CONFIG.zombieCount`/`humanCount` and drops its\n  `ZOMBIE_COUNT`/`HUMAN_COUNT` exports (nothing else imports them).\n- `main.js` reads every tuning value from `CONFIG`.\n- Track `saved` (humans that reached the Exit); when `humans` is empty, end\n  the game: set a `gameOver` flag, stop further movement, and show an overlay\n  with the outcome and score.\n\nWin/lose rule (the one design fork here):\n\n- **[chosen]** win if `saved > humanCount / 2` — a majority saved; else lose.\n- alt: win only if every human is saved (strict, near-impossible against 4 zombies).\n- alt: no binary verdict — show the score only.\n\n- Overlay shows \"You win/lose — saved X of N humans\" plus \"Press R to\n  restart\"; `onKeyDown(\"r\")` reloads the page for a fresh map, guarded by\n  `gameOver`.",
+      "before": "The game has no ending. Humans leave `humans` when they exit (item 7) or\nconvert to zombies (item 6), but nothing detects the empty board, no score is\ntracked, and there is no win/lose display or restart. Gameplay tunables are\nscattered: `actors.js` hardcodes `ZOMBIE_COUNT`/`HUMAN_COUNT`, and `main.js`\nholds move intervals, infection delay, and flee/panic/chase ranges as\nmodule-level `const`s — the plan's \"centralized tuning\" assumption calls for\none config object.",
+      "citations": [],
+      "closesIssues": [],
+      "files": [
+        "src/config.js",
+        "src/main.js",
+        "src/actors.js",
+        "resources/"
+      ],
+      "id": "endgame-tuning",
+      "status": "proposed"
+    }
+  ],
+  "version": 35
+}

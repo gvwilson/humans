@@ -1,7 +1,5 @@
 import { CellType } from "./map.js";
-
-export const ZOMBIE_COUNT = 4;
-export const HUMAN_COUNT = 8;
+import { CONFIG } from "./config.js";
 
 export class Actor {
   constructor(r, c) {
@@ -99,8 +97,8 @@ export function spawnActors(grid) {
     return new Cls(r, c);
   };
 
-  for (let i = 0; i < ZOMBIE_COUNT; i++) actors.push(take(Zombie));
-  for (let i = 0; i < HUMAN_COUNT; i++) actors.push(take(Human));
+  for (let i = 0; i < CONFIG.zombieCount; i++) actors.push(take(Zombie));
+  for (let i = 0; i < CONFIG.humanCount; i++) actors.push(take(Human));
   actors.push(take(Tiger));
   actors.push(take(Bunny));
 

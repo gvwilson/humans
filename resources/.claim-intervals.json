@@ -1,22 +1,6 @@
 {
   "intervals": [
     {
-      "atMs": 1792013209346,
-      "ids": [
-        "infection"
-      ],
-      "kind": "approved",
-      "ref": "refs/bram/claims/1792013209346",
-      "tree": "6a5f2f5f57fe6962122612d5a8028a20b961c613"
-    },
-    {
-      "atMs": 1792013446213,
-      "ids": [],
-      "kind": "cleared",
-      "ref": "refs/bram/claims/1792013446213",
-      "tree": "5830331b64278a4c51fcedc40fef56ebedbfa890"
-    },
-    {
       "atMs": 1792020839543,
       "ids": [
         "human-ai"
@@ -24,6 +8,22 @@
       "kind": "approved",
       "ref": "refs/bram/claims/1792020839543",
       "tree": "c92c526e2573c0ad11ee71af9e18f7704228afac"
+    },
+    {
+      "atMs": 1792021016854,
+      "ids": [],
+      "kind": "cleared",
+      "ref": "refs/bram/claims/1792021016854",
+      "tree": "1d258c81c630bee1d3c42a3cf0bfc4175a36e29f"
+    },
+    {
+      "atMs": 1792021207515,
+      "ids": [
+        "endgame-tuning"
+      ],
+      "kind": "approved",
+      "ref": "refs/bram/claims/1792021207515",
+      "tree": "baef1e2786cd80b8fdfb1afac7fe011358708388"
     }
   ],
   "version": 1

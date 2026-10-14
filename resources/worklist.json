@@ -2,15 +2,17 @@
   "description": "",
   "items": [
     {
-      "begunAtMs": 1792020839543,
+      "begunAtMs": 1792021207514,
       "closesIssues": [],
       "files": [
+        "src/config.js",
         "src/main.js",
+        "src/actors.js",
         "resources/"
       ],
-      "id": "human-ai",
+      "id": "endgame-tuning",
       "status": "proposed"
     }
   ],
-  "version": 33
+  "version": 36
 }
