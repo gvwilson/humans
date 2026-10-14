@@ -9,6 +9,20 @@ export class Actor {
     this.c = c;
   }
 
+  tryMove(grid, dr, dc) {
+    const nr = this.r + dr;
+    const nc = this.c + dc;
+    if (nr < 0 || nr >= grid.length || nc < 0 || nc >= grid[0].length) {
+      return false;
+    }
+    if (grid[nr][nc] === CellType.OBSTACLE) {
+      return false;
+    }
+    this.r = nr;
+    this.c = nc;
+    return true;
+  }
+
   get letter() {
     return "?";
   }

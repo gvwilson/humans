@@ -6,7 +6,7 @@ import {
   GRID_COLS,
   CELL_SIZE,
 } from "./map.js";
-import { spawnActors } from "./actors.js";
+import { spawnActors, Tiger, Bunny } from "./actors.js";
 
 kaplay({
   background: "#1a1a1a",
@@ -34,25 +34,62 @@ for (let r = 0; r < GRID_ROWS; r++) {
 
 const ACTOR_RADIUS = CELL_SIZE / 2 - 3; // inset so circles sit inside their cells
 const ACTOR_TEXT_SIZE = CELL_SIZE / 2;
+const TIGER_MOVE_INTERVAL = 0.12; // seconds between steps (tuning value)
+const BUNNY_MOVE_INTERVAL = 0.2; // seconds between steps (tuning value)
+
+const TIGER_KEYS = { w: [-1, 0], a: [0, -1], s: [1, 0], d: [0, 1] };
+const BUNNY_KEYS = { i: [-1, 0], j: [0, -1], k: [1, 0], l: [0, 1] };
+
+function cellCenter(r, c) {
+  return { x: c * CELL_SIZE + CELL_SIZE / 2, y: r * CELL_SIZE + CELL_SIZE / 2 };
+}
 
 function renderActor(actor) {
-  const px = actor.c * CELL_SIZE + CELL_SIZE / 2;
-  const py = actor.r * CELL_SIZE + CELL_SIZE / 2;
-  add([
+  const { x, y } = cellCenter(actor.r, actor.c);
+  const circleObj = add([
     circle(ACTOR_RADIUS),
     color(actor.color),
     outline(2, "#000000"),
-    pos(px, py),
+    pos(x, y),
     anchor("center"),
   ]);
-  add([
+  const textObj = add([
     text(actor.letter, { size: ACTOR_TEXT_SIZE }),
     color(actor.textColor),
-    pos(px, py),
+    pos(x, y),
     anchor("center"),
   ]);
+  actor.sprites = [circleObj, textObj];
 }
 
-for (const actor of spawnActors(grid)) {
-  renderActor(actor);
+function reposition(actor) {
+  const { x, y } = cellCenter(actor.r, actor.c);
+  for (const sprite of actor.sprites) sprite.pos = vec2(x, y);
 }
+
+const actors = spawnActors(grid);
+for (const actor of actors) renderActor(actor);
+
+const tiger = actors.find((actor) => actor instanceof Tiger);
+const bunny = actors.find((actor) => actor instanceof Bunny);
+
+const players = [
+  { actor: tiger, keys: TIGER_KEYS, interval: TIGER_MOVE_INTERVAL, timer: 0 },
+  { actor: bunny, keys: BUNNY_KEYS, interval: BUNNY_MOVE_INTERVAL, timer: 0 },
+];
+
+onUpdate(() => {
+  for (const player of players) {
+    player.timer += dt();
+    if (player.timer < player.interval) continue;
+    for (const [key, [dr, dc]] of Object.entries(player.keys)) {
+      if (isKeyDown(key)) {
+        if (player.actor.tryMove(grid, dr, dc)) {
+          player.timer = 0;
+          reposition(player.actor);
+        }
+        break;
+      }
+    }
+  }
+});

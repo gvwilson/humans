@@ -1,0 +1,19 @@
+{
+  "description": "",
+  "items": [
+    {
+      "_citationsMissing": true,
+      "after": "- Add `Actor#tryMove(grid, dr, dc)` in `src/actors.js`: returns false (no move)\n  if the target is out of bounds or an `OBSTACLE`, otherwise updates `r`/`c` and\n  returns true. This is the shared movement primitive the zombie/human AI will\n  reuse later.\n- In `src/main.js`: keep references to each actor's circle/text game objects,\n  then drive movement in `onUpdate` with `isKeyDown`. WASD moves the tiger,\n  IJKL moves the bunny; each has its own move interval (`TIGER_MOVE_INTERVAL`,\n  `BUNNY_MOVE_INTERVAL`) so they step at different speeds. On a successful\n  `tryMove`, reposition the actor's sprites via `vec2`.\n\nKAPLAY API confirmed: `onUpdate(cb)` + `dt()`, `isKeyDown(key)`,\n`obj.pos = vec2(x, y)`.",
+      "before": "Actors render as static circled letters; there is no input handling or\nmovement. `src/actors.js`'s `Actor` base class holds only `r`/`c` plus letter\nand color accessors.",
+      "citations": [],
+      "files": [
+        "src/actors.js",
+        "src/main.js",
+        "resources/"
+      ],
+      "id": "player-control",
+      "status": "proposed"
+    }
+  ],
+  "version": 23
+}
