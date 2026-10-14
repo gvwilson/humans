@@ -1,5 +1,16 @@
 {
   "description": "",
-  "items": [],
-  "version": 31
+  "items": [
+    {
+      "begunAtMs": 1792020839543,
+      "closesIssues": [],
+      "files": [
+        "src/main.js",
+        "resources/"
+      ],
+      "id": "human-ai",
+      "status": "proposed"
+    }
+  ],
+  "version": 33
 }

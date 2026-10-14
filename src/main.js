@@ -15,7 +15,7 @@ kaplay({
   height: GRID_ROWS * CELL_SIZE,
 });
 
-const { grid } = generateMap();
+const { grid, exit } = generateMap();
 
 const CELL_COLORS = {
   [CellType.PATH]: "#4a4a4a",
@@ -40,6 +40,11 @@ const BUNNY_MOVE_INTERVAL = 0.2; // seconds between steps (tuning value)
 const ZOMBIE_MOVE_INTERVAL = 0.4; // seconds between steps (tuning value)
 const INFECTION_DELAY = 3; // seconds from infection to conversion (tuning value)
 const INFECTED_TEXT_COLOR = "#ff1744"; // text color for infected humans
+const HUMAN_MOVE_INTERVAL = 0.3; // seconds between steps (tuning value)
+const TIGER_FLEE_RANGE = 4; // humans flee when a tiger is within this many cells (Manhattan)
+const TIGER_PANIC_RANGE = 2; // humans panic when a tiger is this close (Manhattan)
+const BUNNY_CHASE_RANGE = 3; // humans chase the bunny within this many cells (Manhattan)
+const PET_DURATION = 1.5; // seconds a human pauses to pet the bunny (tuning value)
 
 const TIGER_KEYS = { w: [-1, 0], a: [0, -1], s: [1, 0], d: [0, 1] };
 const BUNNY_KEYS = { i: [-1, 0], j: [0, -1], k: [1, 0], l: [0, 1] };
@@ -71,6 +76,52 @@ function reposition(actor) {
   for (const sprite of actor.sprites) sprite.pos = vec2(x, y);
 }
 
+const DIRS = [
+  [-1, 0],
+  [1, 0],
+  [0, -1],
+  [0, 1],
+];
+
+function manhattan(a, b) {
+  return Math.abs(a.r - b.r) + Math.abs(a.c - b.c);
+}
+
+function legalSteps(actor) {
+  return DIRS.filter(([dr, dc]) => {
+    const nr = actor.r + dr;
+    const nc = actor.c + dc;
+    return (
+      nr >= 0 &&
+      nr < grid.length &&
+      nc >= 0 &&
+      nc < grid[0].length &&
+      grid[nr][nc] !== CellType.OBSTACLE
+    );
+  });
+}
+
+function randomStep(actor) {
+  const steps = legalSteps(actor);
+  if (steps.length === 0) return null;
+  return steps[Math.floor(Math.random() * steps.length)];
+}
+
+function fleeStep(actor, from) {
+  const steps = legalSteps(actor);
+  if (steps.length === 0) return null;
+  let best = steps[0];
+  let bestDist = -1;
+  for (const [dr, dc] of steps) {
+    const d = Math.abs(actor.r + dr - from.r) + Math.abs(actor.c + dc - from.c);
+    if (d > bestDist) {
+      bestDist = d;
+      best = [dr, dc];
+    }
+  }
+  return best;
+}
+
 const actors = spawnActors(grid);
 for (const actor of actors) renderActor(actor);
 
@@ -78,7 +129,10 @@ const tiger = actors.find((actor) => actor instanceof Tiger);
 const bunny = actors.find((actor) => actor instanceof Bunny);
 const zombies = actors.filter((actor) => actor instanceof Zombie);
 const humans = actors.filter((actor) => actor instanceof Human);
-for (const human of humans) human.infectionTimer = null;
+for (const human of humans) {
+  human.infectionTimer = null;
+  human.petTimer = 0;
+}
 
 const players = [
   { actor: tiger, keys: TIGER_KEYS, interval: TIGER_MOVE_INTERVAL, timer: 0 },
@@ -87,6 +141,7 @@ const players = [
 
 const isHumanCell = (r, c) => humans.some((h) => h.r === r && h.c === c);
 let zombieTimer = 0;
+let humanTimer = 0;
 
 function markInfected(human) {
   if (human.infectionTimer !== null) return;
@@ -149,4 +204,42 @@ onUpdate(() => {
     if (human.infectionTimer <= 0) toConvert.push(human);
   }
   for (const human of toConvert) convertToZombie(human);
+
+  humanTimer += dt();
+  if (humanTimer >= HUMAN_MOVE_INTERVAL) {
+    humanTimer = 0;
+    const exited = [];
+    for (const human of humans) {
+      if (human.petTimer > 0) {
+        human.petTimer -= HUMAN_MOVE_INTERVAL;
+        continue;
+      }
+      if (human.r === exit.r && human.c === exit.c) {
+        exited.push(human);
+        continue;
+      }
+      const dTiger = manhattan(human, tiger);
+      const dBunny = manhattan(human, bunny);
+      let step = null;
+      if (dTiger <= TIGER_PANIC_RANGE) {
+        step = randomStep(human);
+      } else if (dTiger <= TIGER_FLEE_RANGE) {
+        step = fleeStep(human, tiger);
+      } else if (dBunny <= BUNNY_CHASE_RANGE) {
+        if (dBunny === 0) {
+          human.petTimer = PET_DURATION;
+          continue;
+        }
+        step = nextStepToward(grid, human.r, human.c, (r, c) => r === bunny.r && c === bunny.c);
+      } else {
+        step = nextStepToward(grid, human.r, human.c, (r, c) => r === exit.r && c === exit.c);
+      }
+      if (step && human.tryMove(grid, step[0], step[1])) reposition(human);
+    }
+    for (const human of exited) {
+      const idx = humans.indexOf(human);
+      if (idx !== -1) humans.splice(idx, 1);
+      for (const sprite of human.sprites) sprite.destroy();
+    }
+  }
 });

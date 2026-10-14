@@ -1,0 +1,19 @@
+{
+  "description": "",
+  "items": [
+    {
+      "_citationsMissing": true,
+      "after": "Humans move on their own `HUMAN_MOVE_INTERVAL` timer (a `humanTimer`\naccumulator like `zombieTimer`), each tick choosing one orthogonal step by\nthe first rule that applies, using Manhattan distance for ranges:\n\n- **panic** — tiger within `TIGER_PANIC_RANGE`: take a random legal step\n  (may blunder into a zombie).\n- **flee** — tiger within `TIGER_FLEE_RANGE`: take the legal step that\n  maximizes distance from the tiger.\n- **chase** — bunny within `BUNNY_CHASE_RANGE`: step toward the bunny via\n  `nextStepToward`; on catching it (shares the bunny's cell) pause for\n  `PET_DURATION` (per-human `petTimer`), letting zombies gain ground.\n- **seek exit** — default: step toward the Exit cell via `nextStepToward`.\n\nA human that reaches the Exit cell exits: remove it from `humans` and\ndestroy its sprites (no score display yet — item 8). Reuse `nextStepToward`\nfor seek and chase; add small local helpers for legal-step / flee / panic.\nNew named consts in `main.js`: `HUMAN_MOVE_INTERVAL`, `TIGER_FLEE_RANGE`,\n`TIGER_PANIC_RANGE`, `BUNNY_CHASE_RANGE`, `PET_DURATION`. `const { grid,\nexit } = generateMap()` so the Exit cell is known.",
+      "before": "Humans are static. `src/main.js` spawns and renders them and (from item 6)\ntracks each one's `infectionTimer`, but nothing ever moves them: only the\ntiger/bunny (player input) and zombies (`nextStepToward` pursuit) move.\n`generateMap()` returns `{ grid, exit }` but `main.js` destructures only\n`{ grid }`, so the Exit cell location is discarded. Tuning values live as\nmodule-level `const`s in `main.js`; `nextStepToward` is the existing BFS\npathfinding primitive (zombies already use it).",
+      "citations": [],
+      "closesIssues": [],
+      "files": [
+        "src/main.js",
+        "resources/"
+      ],
+      "id": "human-ai",
+      "status": "proposed"
+    }
+  ],
+  "version": 32
+}

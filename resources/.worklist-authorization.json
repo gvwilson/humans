@@ -1,26 +1,27 @@
 {
   "kind": "approved",
   "ids": [
-    "infection"
+    "human-ai"
   ],
   "items": [
     {
       "_citationsMissing": true,
-      "after": "- Add `INFECTION_DELAY` (seconds) as a named tuning constant in `src/main.js`.\n- Mark a human infected when a zombie moves onto its cell (the only contact\n  vector while humans are static). Track it as a per-human timer.\n- Each tick, count infected humans' timers down by `dt()`; when one reaches\n  zero, replace that human with a `Zombie` on the same cell — remove it from\n  `humans`, push a new `Zombie` into `zombies`, and swap sprites (destroy the\n  human's, render the zombie's).\n- Make `humans` and `zombies` mutable so converted humans drop out of zombie\n  targeting, which reads the live `humans` array.\n\nSmall observability aid: render infected humans with a distinct text color so\nthe timed conversion is visible in the browser before it fires.",
-      "before": "Zombies pursue the nearest human via `nextStepToward` (`src/map.js`) but nothing\nhappens on contact. In `src/main.js`, `humans` and `zombies` are `const` arrays\nfiltered from the spawn; humans never move yet (that's item 7) and carry no\ninfection state. Tuning values live as module-level `const`s in `main.js`.",
+      "after": "Humans move on their own `HUMAN_MOVE_INTERVAL` timer (a `humanTimer`\naccumulator like `zombieTimer`), each tick choosing one orthogonal step by\nthe first rule that applies, using Manhattan distance for ranges:\n\n- **panic** — tiger within `TIGER_PANIC_RANGE`: take a random legal step\n  (may blunder into a zombie).\n- **flee** — tiger within `TIGER_FLEE_RANGE`: take the legal step that\n  maximizes distance from the tiger.\n- **chase** — bunny within `BUNNY_CHASE_RANGE`: step toward the bunny via\n  `nextStepToward`; on catching it (shares the bunny's cell) pause for\n  `PET_DURATION` (per-human `petTimer`), letting zombies gain ground.\n- **seek exit** — default: step toward the Exit cell via `nextStepToward`.\n\nA human that reaches the Exit cell exits: remove it from `humans` and\ndestroy its sprites (no score display yet — item 8). Reuse `nextStepToward`\nfor seek and chase; add small local helpers for legal-step / flee / panic.\nNew named consts in `main.js`: `HUMAN_MOVE_INTERVAL`, `TIGER_FLEE_RANGE`,\n`TIGER_PANIC_RANGE`, `BUNNY_CHASE_RANGE`, `PET_DURATION`. `const { grid,\nexit } = generateMap()` so the Exit cell is known.",
+      "before": "Humans are static. `src/main.js` spawns and renders them and (from item 6)\ntracks each one's `infectionTimer`, but nothing ever moves them: only the\ntiger/bunny (player input) and zombies (`nextStepToward` pursuit) move.\n`generateMap()` returns `{ grid, exit }` but `main.js` destructures only\n`{ grid }`, so the Exit cell location is discarded. Tuning values live as\nmodule-level `const`s in `main.js`; `nextStepToward` is the existing BFS\npathfinding primitive (zombies already use it).",
       "citations": [],
+      "closesIssues": [],
       "feedback": "",
       "files": [
         "src/main.js",
         "resources/"
       ],
-      "id": "infection",
+      "id": "human-ai",
       "status": "proposed"
     }
   ],
-  "issuedAtMs": 1792013209343,
+  "issuedAtMs": 1792020839540,
   "source": "worklist-action-command",
-  "consumedAtMs": 1792013446267,
+  "consumedAtMs": null,
   "interruptedAtMs": null,
   "commitToo": true
 }

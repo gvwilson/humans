@@ -15,6 +15,15 @@
       "kind": "cleared",
       "ref": "refs/bram/claims/1792013446213",
       "tree": "5830331b64278a4c51fcedc40fef56ebedbfa890"
+    },
+    {
+      "atMs": 1792020839543,
+      "ids": [
+        "human-ai"
+      ],
+      "kind": "approved",
+      "ref": "refs/bram/claims/1792020839543",
+      "tree": "c92c526e2573c0ad11ee71af9e18f7704228afac"
     }
   ],
   "version": 1
