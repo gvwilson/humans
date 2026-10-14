@@ -15,3 +15,5 @@
 {"at":"2026-10-14T15:07:54.368Z","atMs":1791990474368,"authorization":"apply-and-commit","branch":"main","itemIds":["actor-classes"],"kind":"commit","sha":"0261e7767c27084bb007b6e41f5f475a2e9d7937","stagedPaths":["src/actors.js","src/main.js"]}
 {"applyAndCommit":true,"at":"2026-10-14T18:34:23.827Z","atMs":1792002863827,"decision":"approved","itemIds":["player-control"],"kind":"authorization","source":"worklist-action-command"}
 {"at":"2026-10-14T18:37:09.803Z","atMs":1792003029803,"authorization":"apply-and-commit","branch":"main","itemIds":["player-control"],"kind":"commit","sha":"d994f4303a2de07ddd87509885f7db09770c1056","stagedPaths":["src/actors.js","src/main.js"]}
+{"applyAndCommit":true,"at":"2026-10-14T18:44:44.985Z","atMs":1792003484985,"decision":"approved","itemIds":["zombie-ai"],"kind":"authorization","source":"worklist-action-command"}
+{"at":"2026-10-14T18:47:42.384Z","atMs":1792003662384,"authorization":"apply-and-commit","branch":"main","itemIds":["zombie-ai"],"kind":"commit","sha":"ff4d3e37b740e9459a34126d09902ab9de6fd86d","stagedPaths":["src/map.js","src/main.js"]}

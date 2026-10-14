@@ -62,3 +62,30 @@ export function generateMap(rows = GRID_ROWS, cols = GRID_COLS) {
 
   return { grid, exit: { r: er, c: ec } };
 }
+
+export function nextStepToward(grid, startR, startC, isTarget) {
+  const rows = grid.length;
+  const cols = grid[0].length;
+  const key = (r, c) => r * cols + c;
+  const firstStep = new Map([[key(startR, startC), null]]);
+  const queue = [[startR, startC]];
+  const dirs = [[-1, 0], [1, 0], [0, -1], [0, 1]];
+
+  for (let head = 0; head < queue.length; head++) {
+    const [r, c] = queue[head];
+    for (const [dr, dc] of dirs) {
+      const nr = r + dr;
+      const nc = c + dc;
+      if (nr < 0 || nr >= rows || nc < 0 || nc >= cols) continue;
+      if (grid[nr][nc] === CellType.OBSTACLE) continue;
+      const k = key(nr, nc);
+      if (firstStep.has(k)) continue;
+      const step = firstStep.get(key(r, c)) ?? [dr, dc];
+      if (isTarget(nr, nc)) return step;
+      firstStep.set(k, step);
+      queue.push([nr, nc]);
+    }
+  }
+
+  return null;
+}

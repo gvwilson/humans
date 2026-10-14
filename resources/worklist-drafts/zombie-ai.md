@@ -1,0 +1,22 @@
+# Before
+
+Zombies are placed but static. `src/map.js` has no pathfinding; `src/main.js`
+drives only the two player animals in its `onUpdate` loop.
+
+# After
+
+- Add `nextStepToward(grid, startR, startC, isTarget)` to `src/map.js`: a
+  breadth-first search over walkable (non-obstacle) cells that returns the
+  first step `[dr, dc]` along the shortest path to the nearest cell satisfying
+  `isTarget`, or `null` if none is reachable.
+- In `src/main.js`: separate zombies and humans out of the spawned actors, add a
+  `ZOMBIE_MOVE_INTERVAL`, and on each zombie tick step every zombie one cell
+  along `nextStepToward` toward the nearest human (reusing `Actor#tryMove` and
+  `reposition`).
+
+Why BFS, not a greedy Manhattan step:
+
+- Greedy step toward the nearest human — rejected: maze dead-ends would stall
+  zombies against walls, so they would not visibly "pursue".
+- [chosen] BFS shortest path — one small `nextStepToward`, which item 7
+  (`human-ai`) will reuse for humans seeking the Exit.

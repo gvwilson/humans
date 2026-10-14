@@ -1,12 +1,13 @@
 import kaplay from "https://unpkg.com/kaplay@3001.0.19/dist/kaplay.mjs";
 import {
   generateMap,
+  nextStepToward,
   CellType,
   GRID_ROWS,
   GRID_COLS,
   CELL_SIZE,
 } from "./map.js";
-import { spawnActors, Tiger, Bunny } from "./actors.js";
+import { spawnActors, Tiger, Bunny, Zombie, Human } from "./actors.js";
 
 kaplay({
   background: "#1a1a1a",
@@ -36,6 +37,7 @@ const ACTOR_RADIUS = CELL_SIZE / 2 - 3; // inset so circles sit inside their cel
 const ACTOR_TEXT_SIZE = CELL_SIZE / 2;
 const TIGER_MOVE_INTERVAL = 0.12; // seconds between steps (tuning value)
 const BUNNY_MOVE_INTERVAL = 0.2; // seconds between steps (tuning value)
+const ZOMBIE_MOVE_INTERVAL = 0.4; // seconds between steps (tuning value)
 
 const TIGER_KEYS = { w: [-1, 0], a: [0, -1], s: [1, 0], d: [0, 1] };
 const BUNNY_KEYS = { i: [-1, 0], j: [0, -1], k: [1, 0], l: [0, 1] };
@@ -72,11 +74,16 @@ for (const actor of actors) renderActor(actor);
 
 const tiger = actors.find((actor) => actor instanceof Tiger);
 const bunny = actors.find((actor) => actor instanceof Bunny);
+const zombies = actors.filter((actor) => actor instanceof Zombie);
+const humans = actors.filter((actor) => actor instanceof Human);
 
 const players = [
   { actor: tiger, keys: TIGER_KEYS, interval: TIGER_MOVE_INTERVAL, timer: 0 },
   { actor: bunny, keys: BUNNY_KEYS, interval: BUNNY_MOVE_INTERVAL, timer: 0 },
 ];
+
+const isHumanCell = (r, c) => humans.some((h) => h.r === r && h.c === c);
+let zombieTimer = 0;
 
 onUpdate(() => {
   for (const player of players) {
@@ -89,6 +96,17 @@ onUpdate(() => {
           reposition(player.actor);
         }
         break;
+      }
+    }
+  }
+
+  zombieTimer += dt();
+  if (zombieTimer >= ZOMBIE_MOVE_INTERVAL) {
+    zombieTimer = 0;
+    for (const zombie of zombies) {
+      const step = nextStepToward(grid, zombie.r, zombie.c, isHumanCell);
+      if (step) {
+        if (zombie.tryMove(grid, step[0], step[1])) reposition(zombie);
       }
     }
   }

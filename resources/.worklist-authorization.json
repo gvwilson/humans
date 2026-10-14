@@ -1,27 +1,27 @@
 {
   "kind": "approved",
   "ids": [
-    "player-control"
+    "zombie-ai"
   ],
   "items": [
     {
       "_citationsMissing": true,
-      "after": "- Add `Actor#tryMove(grid, dr, dc)` in `src/actors.js`: returns false (no move)\n  if the target is out of bounds or an `OBSTACLE`, otherwise updates `r`/`c` and\n  returns true. This is the shared movement primitive the zombie/human AI will\n  reuse later.\n- In `src/main.js`: keep references to each actor's circle/text game objects,\n  then drive movement in `onUpdate` with `isKeyDown`. WASD moves the tiger,\n  IJKL moves the bunny; each has its own move interval (`TIGER_MOVE_INTERVAL`,\n  `BUNNY_MOVE_INTERVAL`) so they step at different speeds. On a successful\n  `tryMove`, reposition the actor's sprites via `vec2`.\n\nKAPLAY API confirmed: `onUpdate(cb)` + `dt()`, `isKeyDown(key)`,\n`obj.pos = vec2(x, y)`.",
-      "before": "Actors render as static circled letters; there is no input handling or\nmovement. `src/actors.js`'s `Actor` base class holds only `r`/`c` plus letter\nand color accessors.",
+      "after": "- Add `nextStepToward(grid, startR, startC, isTarget)` to `src/map.js`: a\n  breadth-first search over walkable (non-obstacle) cells that returns the\n  first step `[dr, dc]` along the shortest path to the nearest cell satisfying\n  `isTarget`, or `null` if none is reachable.\n- In `src/main.js`: separate zombies and humans out of the spawned actors, add a\n  `ZOMBIE_MOVE_INTERVAL`, and on each zombie tick step every zombie one cell\n  along `nextStepToward` toward the nearest human (reusing `Actor#tryMove` and\n  `reposition`).\n\nWhy BFS, not a greedy Manhattan step:\n\n- Greedy step toward the nearest human — rejected: maze dead-ends would stall\n  zombies against walls, so they would not visibly \"pursue\".\n- [chosen] BFS shortest path — one small `nextStepToward`, which item 7\n  (`human-ai`) will reuse for humans seeking the Exit.",
+      "before": "Zombies are placed but static. `src/map.js` has no pathfinding; `src/main.js`\ndrives only the two player animals in its `onUpdate` loop.",
       "citations": [],
       "feedback": "",
       "files": [
-        "src/actors.js",
+        "src/map.js",
         "src/main.js",
         "resources/"
       ],
-      "id": "player-control",
+      "id": "zombie-ai",
       "status": "proposed"
     }
   ],
-  "issuedAtMs": 1792002863825,
+  "issuedAtMs": 1792003484983,
   "source": "worklist-action-command",
-  "consumedAtMs": 1792003030059,
+  "consumedAtMs": 1792003662512,
   "interruptedAtMs": null,
   "commitToo": true
 }
