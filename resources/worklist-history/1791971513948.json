@@ -1,0 +1,18 @@
+{
+  "description": "",
+  "items": [
+    {
+      "_citationsMissing": true,
+      "after": "Create the minimal game scaffold:\n\n- `index.html` — a single HTML page with one `<script type=\"module\" src=\"src/main.js\"></script>` tag (the ES-module approach KAPLAY recommends for a no-bundler setup).\n- `src/main.js` — imports KAPLAY from a pinned CDN and initializes it:\n\n  ```js\n  import kaplay from \"https://unpkg.com/kaplay@3001.0.19/dist/kaplay.mjs\";\n  kaplay({ background: \"#1a1a1a\" });\n  ```\n\n  `kaplay()` starts KAPLAY's built-in render loop and creates a blank canvas. The dark background makes the canvas visible (proving it rendered) against the page background.\n\n`src/` is where the later files (map, actors, AI) will live.\n\nDone when: opening the page (served via `python3 -m http.server`) shows a blank dark canvas with no console errors.",
+      "before": "No game files exist yet. The repository contains only documentation and config (`README.md`, `PLAN.md`, `LICENSE.md`, `AGENTS.md`, `CLAUDE.md`) plus the `.claude/` and `resources/` directories. There is no `index.html` and no JavaScript. This is the first of eight roadmap items in `PLAN.md`.",
+      "citations": [],
+      "files": [
+        "index.html",
+        "src/main.js"
+      ],
+      "id": "scaffold-engine",
+      "status": "proposed"
+    }
+  ],
+  "version": 4
+}

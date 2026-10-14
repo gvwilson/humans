@@ -1,25 +1,26 @@
 {
   "kind": "approved",
   "ids": [
-    "implementation-plan"
+    "scaffold-engine"
   ],
   "items": [
     {
       "_citationsMissing": true,
-      "after": "Create `PLAN.md` capturing the implementation roadmap, so it survives across sessions and is the source of truth for sequencing. It will contain:\n\n- **Engine decision:** KAPLAY (formerly Kaboom.js), loaded via a pinned CDN for now (no vendored copy — avoids committing a large opaque minified blob; npm + bundler deferred to the later packaging step).\n- **Key design assumptions:**\n  - Grid-based discrete movement: an actor occupies a cell and steps orthogonally; speed = move interval per actor kind.\n  - All tunable values centralized in one config object (speeds, infection time, flee/chase/pet ranges) for easy playtesting.\n- **Eight worklist items** in dependency order, each with a one-line goal and a \"done when\" acceptance check:\n\n1. `scaffold-engine` — single `index.html` + engine + empty game loop + blank canvas.\n2. `map-grid-generator` — grid/cell classes, random connected map with one border Exit, rendering.\n3. `actor-classes` — `Actor` base + `Zombie`/`Human`/`Tiger`/`Bunny`, random placement, circled-letter rendering.\n4. `player-control` — WASD (tiger) / IJKL (bunny) input + obstacle-blocked movement.\n5. `zombie-ai` — zombies move toward the nearest human.\n6. `infection` — contact infects a human; timed conversion to a zombie.\n7. `human-ai` — seek exit, flee/panic from tiger, chase/pet bunny.\n8. `endgame-tuning` — end conditions, score, restart, centralize tunables.",
-      "before": "No implementation plan exists. `README.md` describes the game (\"Save the Humans!\") at a high level, but there is no breakdown into discrete, independently-implementable steps. Development will span multiple sessions, one worklist item at a time.",
+      "after": "Create the minimal game scaffold:\n\n- `index.html` — a single HTML page with one `<script type=\"module\" src=\"src/main.js\"></script>` tag (the ES-module approach KAPLAY recommends for a no-bundler setup).\n- `src/main.js` — imports KAPLAY from a pinned CDN and initializes it:\n\n  ```js\n  import kaplay from \"https://unpkg.com/kaplay@3001.0.19/dist/kaplay.mjs\";\n  kaplay({ background: \"#1a1a1a\" });\n  ```\n\n  `kaplay()` starts KAPLAY's built-in render loop and creates a blank canvas. The dark background makes the canvas visible (proving it rendered) against the page background.\n\n`src/` is where the later files (map, actors, AI) will live.\n\nDone when: opening the page (served via `python3 -m http.server`) shows a blank dark canvas with no console errors.",
+      "before": "No game files exist yet. The repository contains only documentation and config (`README.md`, `PLAN.md`, `LICENSE.md`, `AGENTS.md`, `CLAUDE.md`) plus the `.claude/` and `resources/` directories. There is no `index.html` and no JavaScript. This is the first of eight roadmap items in `PLAN.md`.",
       "citations": [],
       "feedback": "",
       "files": [
-        "PLAN.md"
+        "index.html",
+        "src/main.js"
       ],
-      "id": "implementation-plan",
+      "id": "scaffold-engine",
       "status": "proposed"
     }
   ],
-  "issuedAtMs": 1791942212631,
+  "issuedAtMs": 1791971532392,
   "source": "worklist-action-command",
-  "consumedAtMs": 1791942297234,
+  "consumedAtMs": 1791971557206,
   "interruptedAtMs": null,
   "commitToo": true
 }

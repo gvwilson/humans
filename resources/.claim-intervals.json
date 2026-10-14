@@ -1,11 +1,20 @@
 {
   "intervals": [
     {
-      "atMs": 1791942297190,
+      "atMs": 1791971532394,
+      "ids": [
+        "scaffold-engine"
+      ],
+      "kind": "approved",
+      "ref": "refs/bram/claims/1791971532394",
+      "tree": "02f1e9904ca5004dba6bec1eb8a6ff5a9faf501f"
+    },
+    {
+      "atMs": 1791971557155,
       "ids": [],
       "kind": "cleared",
-      "ref": "refs/bram/claims/1791942297190",
-      "tree": "3ea01aacad4a3d05450bd612adf5422778f5f51f"
+      "ref": "refs/bram/claims/1791971557155",
+      "tree": "93754481fd994376285c853928ae882e0efb277b"
     }
   ],
   "version": 1
