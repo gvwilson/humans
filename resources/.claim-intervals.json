@@ -1,21 +1,20 @@
 {
   "intervals": [
     {
-      "atMs": 1791979712002,
+      "atMs": 1791981042755,
       "ids": [
-        "readme-run-instructions",
-        "claude-md-run-sync-note"
+        "commit-resources-with-changes"
       ],
       "kind": "approved",
-      "ref": "refs/bram/claims/1791979712002",
-      "tree": "997cbf3b55cea768c5aaa6f9661181ba0c41d1f1"
+      "ref": "refs/bram/claims/1791981042755",
+      "tree": "148b8b6ef8ed3866df045805e5f0b3699aa9de34"
     },
     {
-      "atMs": 1791979723820,
+      "atMs": 1791981083430,
       "ids": [],
       "kind": "cleared",
-      "ref": "refs/bram/claims/1791979723820",
-      "tree": "522c51fd11f45d694ba99dd9dbc17f797ff4a744"
+      "ref": "refs/bram/claims/1791981083430",
+      "tree": "e06d75a7803d2d529a919f1dbd4ee463fe1506e1"
     }
   ],
   "version": 1
