@@ -1,27 +1,26 @@
 {
   "kind": "approved",
   "ids": [
-    "zombie-ai"
+    "infection"
   ],
   "items": [
     {
       "_citationsMissing": true,
-      "after": "- Add `nextStepToward(grid, startR, startC, isTarget)` to `src/map.js`: a\n  breadth-first search over walkable (non-obstacle) cells that returns the\n  first step `[dr, dc]` along the shortest path to the nearest cell satisfying\n  `isTarget`, or `null` if none is reachable.\n- In `src/main.js`: separate zombies and humans out of the spawned actors, add a\n  `ZOMBIE_MOVE_INTERVAL`, and on each zombie tick step every zombie one cell\n  along `nextStepToward` toward the nearest human (reusing `Actor#tryMove` and\n  `reposition`).\n\nWhy BFS, not a greedy Manhattan step:\n\n- Greedy step toward the nearest human — rejected: maze dead-ends would stall\n  zombies against walls, so they would not visibly \"pursue\".\n- [chosen] BFS shortest path — one small `nextStepToward`, which item 7\n  (`human-ai`) will reuse for humans seeking the Exit.",
-      "before": "Zombies are placed but static. `src/map.js` has no pathfinding; `src/main.js`\ndrives only the two player animals in its `onUpdate` loop.",
+      "after": "- Add `INFECTION_DELAY` (seconds) as a named tuning constant in `src/main.js`.\n- Mark a human infected when a zombie moves onto its cell (the only contact\n  vector while humans are static). Track it as a per-human timer.\n- Each tick, count infected humans' timers down by `dt()`; when one reaches\n  zero, replace that human with a `Zombie` on the same cell — remove it from\n  `humans`, push a new `Zombie` into `zombies`, and swap sprites (destroy the\n  human's, render the zombie's).\n- Make `humans` and `zombies` mutable so converted humans drop out of zombie\n  targeting, which reads the live `humans` array.\n\nSmall observability aid: render infected humans with a distinct text color so\nthe timed conversion is visible in the browser before it fires.",
+      "before": "Zombies pursue the nearest human via `nextStepToward` (`src/map.js`) but nothing\nhappens on contact. In `src/main.js`, `humans` and `zombies` are `const` arrays\nfiltered from the spawn; humans never move yet (that's item 7) and carry no\ninfection state. Tuning values live as module-level `const`s in `main.js`.",
       "citations": [],
       "feedback": "",
       "files": [
-        "src/map.js",
         "src/main.js",
         "resources/"
       ],
-      "id": "zombie-ai",
+      "id": "infection",
       "status": "proposed"
     }
   ],
-  "issuedAtMs": 1792003484983,
+  "issuedAtMs": 1792013209343,
   "source": "worklist-action-command",
-  "consumedAtMs": 1792003662512,
+  "consumedAtMs": null,
   "interruptedAtMs": null,
   "commitToo": true
 }

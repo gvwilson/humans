@@ -15,6 +15,15 @@
       "kind": "cleared",
       "ref": "refs/bram/claims/1792003662467",
       "tree": "04727b8fabf67253e2ee6901e02149945668bb96"
+    },
+    {
+      "atMs": 1792013209346,
+      "ids": [
+        "infection"
+      ],
+      "kind": "approved",
+      "ref": "refs/bram/claims/1792013209346",
+      "tree": "6a5f2f5f57fe6962122612d5a8028a20b961c613"
     }
   ],
   "version": 1

@@ -1,0 +1,18 @@
+{
+  "description": "",
+  "items": [
+    {
+      "_citationsMissing": true,
+      "after": "- Add `INFECTION_DELAY` (seconds) as a named tuning constant in `src/main.js`.\n- Mark a human infected when a zombie moves onto its cell (the only contact\n  vector while humans are static). Track it as a per-human timer.\n- Each tick, count infected humans' timers down by `dt()`; when one reaches\n  zero, replace that human with a `Zombie` on the same cell — remove it from\n  `humans`, push a new `Zombie` into `zombies`, and swap sprites (destroy the\n  human's, render the zombie's).\n- Make `humans` and `zombies` mutable so converted humans drop out of zombie\n  targeting, which reads the live `humans` array.\n\nSmall observability aid: render infected humans with a distinct text color so\nthe timed conversion is visible in the browser before it fires.",
+      "before": "Zombies pursue the nearest human via `nextStepToward` (`src/map.js`) but nothing\nhappens on contact. In `src/main.js`, `humans` and `zombies` are `const` arrays\nfiltered from the spawn; humans never move yet (that's item 7) and carry no\ninfection state. Tuning values live as module-level `const`s in `main.js`.",
+      "citations": [],
+      "files": [
+        "src/main.js",
+        "resources/"
+      ],
+      "id": "infection",
+      "status": "proposed"
+    }
+  ],
+  "version": 29
+}

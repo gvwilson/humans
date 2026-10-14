@@ -38,6 +38,8 @@ const ACTOR_TEXT_SIZE = CELL_SIZE / 2;
 const TIGER_MOVE_INTERVAL = 0.12; // seconds between steps (tuning value)
 const BUNNY_MOVE_INTERVAL = 0.2; // seconds between steps (tuning value)
 const ZOMBIE_MOVE_INTERVAL = 0.4; // seconds between steps (tuning value)
+const INFECTION_DELAY = 3; // seconds from infection to conversion (tuning value)
+const INFECTED_TEXT_COLOR = "#ff1744"; // text color for infected humans
 
 const TIGER_KEYS = { w: [-1, 0], a: [0, -1], s: [1, 0], d: [0, 1] };
 const BUNNY_KEYS = { i: [-1, 0], j: [0, -1], k: [1, 0], l: [0, 1] };
@@ -76,6 +78,7 @@ const tiger = actors.find((actor) => actor instanceof Tiger);
 const bunny = actors.find((actor) => actor instanceof Bunny);
 const zombies = actors.filter((actor) => actor instanceof Zombie);
 const humans = actors.filter((actor) => actor instanceof Human);
+for (const human of humans) human.infectionTimer = null;
 
 const players = [
   { actor: tiger, keys: TIGER_KEYS, interval: TIGER_MOVE_INTERVAL, timer: 0 },
@@ -84,6 +87,28 @@ const players = [
 
 const isHumanCell = (r, c) => humans.some((h) => h.r === r && h.c === c);
 let zombieTimer = 0;
+
+function markInfected(human) {
+  if (human.infectionTimer !== null) return;
+  human.infectionTimer = INFECTION_DELAY;
+  human.sprites[1].destroy();
+  const { x, y } = cellCenter(human.r, human.c);
+  human.sprites[1] = add([
+    text(human.letter, { size: ACTOR_TEXT_SIZE }),
+    color(INFECTED_TEXT_COLOR),
+    pos(x, y),
+    anchor("center"),
+  ]);
+}
+
+function convertToZombie(human) {
+  const idx = humans.indexOf(human);
+  if (idx !== -1) humans.splice(idx, 1);
+  const zombie = new Zombie(human.r, human.c);
+  zombies.push(zombie);
+  for (const sprite of human.sprites) sprite.destroy();
+  renderActor(zombie);
+}
 
 onUpdate(() => {
   for (const player of players) {
@@ -110,4 +135,18 @@ onUpdate(() => {
       }
     }
   }
+
+  for (const zombie of zombies) {
+    for (const human of humans) {
+      if (zombie.r === human.r && zombie.c === human.c) markInfected(human);
+    }
+  }
+
+  const toConvert = [];
+  for (const human of humans) {
+    if (human.infectionTimer === null) continue;
+    human.infectionTimer -= dt();
+    if (human.infectionTimer <= 0) toConvert.push(human);
+  }
+  for (const human of toConvert) convertToZombie(human);
 });
