@@ -1,20 +1,20 @@
 {
   "intervals": [
     {
-      "atMs": 1791981042755,
+      "atMs": 1791990399292,
       "ids": [
-        "commit-resources-with-changes"
+        "actor-classes"
       ],
       "kind": "approved",
-      "ref": "refs/bram/claims/1791981042755",
-      "tree": "148b8b6ef8ed3866df045805e5f0b3699aa9de34"
+      "ref": "refs/bram/claims/1791990399292",
+      "tree": "f4a2537a85b7c5a06622f93778075b1fb75c5959"
     },
     {
-      "atMs": 1791981083430,
+      "atMs": 1791990474526,
       "ids": [],
       "kind": "cleared",
-      "ref": "refs/bram/claims/1791981083430",
-      "tree": "e06d75a7803d2d529a919f1dbd4ee463fe1506e1"
+      "ref": "refs/bram/claims/1791990474526",
+      "tree": "795149b79f5c0f4b7d27965fb501e88f58836ac8"
     }
   ],
   "version": 1

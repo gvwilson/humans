@@ -1,0 +1,23 @@
+# Before
+
+`src/main.js` renders only the map grid — no actor classes, no actor
+placement, no actor rendering. There is no `src/actors.js`.
+
+# After
+
+Add `src/actors.js` defining:
+
+- an `Actor` base class holding a grid position (`r`, `c`) with `letter` and
+  `color`/`textColor` accessors;
+- `Zombie` (`Z`, green), `Human` (`H`, yellow), `Tiger` (`T`, orange) and
+  `Bunny` (`B`, pink) subclasses overriding those accessors;
+- a `spawnActors(grid)` helper that collects all PATH cells, Fisher-Yates
+  shuffles them, and places `ZOMBIE_COUNT` zombies, `HUMAN_COUNT` humans, one
+  tiger and one bunny on distinct cells.
+
+Update `src/main.js` to call `spawnActors(grid)` after rendering the grid and
+draw each actor as a circled letter: a filled `circle()` with an `outline()`
+plus a centered `text()` letter. KAPLAY API confirmed: `circle(radius)`,
+`outline(width, color)`, `text(str, { size })`, `anchor("center")`.
+
+README's "Running" section is unchanged (still a static site).

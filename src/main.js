@@ -6,6 +6,7 @@ import {
   GRID_COLS,
   CELL_SIZE,
 } from "./map.js";
+import { spawnActors } from "./actors.js";
 
 kaplay({
   background: "#1a1a1a",
@@ -29,4 +30,29 @@ for (let r = 0; r < GRID_ROWS; r++) {
       color(CELL_COLORS[grid[r][c]]),
     ]);
   }
+}
+
+const ACTOR_RADIUS = CELL_SIZE / 2 - 3; // inset so circles sit inside their cells
+const ACTOR_TEXT_SIZE = CELL_SIZE / 2;
+
+function renderActor(actor) {
+  const px = actor.c * CELL_SIZE + CELL_SIZE / 2;
+  const py = actor.r * CELL_SIZE + CELL_SIZE / 2;
+  add([
+    circle(ACTOR_RADIUS),
+    color(actor.color),
+    outline(2, "#000000"),
+    pos(px, py),
+    anchor("center"),
+  ]);
+  add([
+    text(actor.letter, { size: ACTOR_TEXT_SIZE }),
+    color(actor.textColor),
+    pos(px, py),
+    anchor("center"),
+  ]);
+}
+
+for (const actor of spawnActors(grid)) {
+  renderActor(actor);
 }
