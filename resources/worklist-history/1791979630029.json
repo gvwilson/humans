@@ -1,0 +1,28 @@
+{
+  "description": "",
+  "items": [
+    {
+      "_citationsMissing": true,
+      "after": "Add a \"## Running\" section after the intro. It will explain that the game is a static site with no build step, that it loads KAPLAY from a CDN and uses ES modules (so it must be served over HTTP rather than opened directly from the filesystem), and how to run it:\n\n    python3 -m http.server 8000\n\nthen open <http://localhost:8000> in a browser. Reload the page to generate a new map.",
+      "before": "`README.md` has a title, an intro, and an \"## Implementation\" list, but no instructions for running the program in its current state.",
+      "citations": [],
+      "files": [
+        "README.md"
+      ],
+      "id": "readme-run-instructions",
+      "status": "proposed"
+    },
+    {
+      "_citationsMissing": true,
+      "after": "Append a \"Project conventions\" note to `CLAUDE.md` instructing that, after changing the code, the \"Running\" section of `README.md` be updated so it always reflects how to run the program in its current state.",
+      "before": "The project's `CLAUDE.md` contains only the `@.claude/bram-conventions.md` import. There is no instruction to keep documentation in sync with code changes.",
+      "citations": [],
+      "files": [
+        "CLAUDE.md"
+      ],
+      "id": "claude-md-run-sync-note",
+      "status": "proposed"
+    }
+  ],
+  "version": 10
+}

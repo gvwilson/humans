@@ -1,20 +1,21 @@
 {
   "intervals": [
     {
-      "atMs": 1791971532394,
+      "atMs": 1791979712002,
       "ids": [
-        "scaffold-engine"
+        "readme-run-instructions",
+        "claude-md-run-sync-note"
       ],
       "kind": "approved",
-      "ref": "refs/bram/claims/1791971532394",
-      "tree": "02f1e9904ca5004dba6bec1eb8a6ff5a9faf501f"
+      "ref": "refs/bram/claims/1791979712002",
+      "tree": "997cbf3b55cea768c5aaa6f9661181ba0c41d1f1"
     },
     {
-      "atMs": 1791971557155,
+      "atMs": 1791979723820,
       "ids": [],
       "kind": "cleared",
-      "ref": "refs/bram/claims/1791971557155",
-      "tree": "93754481fd994376285c853928ae882e0efb277b"
+      "ref": "refs/bram/claims/1791979723820",
+      "tree": "522c51fd11f45d694ba99dd9dbc17f797ff4a744"
     }
   ],
   "version": 1

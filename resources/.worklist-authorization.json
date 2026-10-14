@@ -1,26 +1,40 @@
 {
   "kind": "approved",
   "ids": [
-    "scaffold-engine"
+    "readme-run-instructions",
+    "claude-md-run-sync-note"
   ],
   "items": [
     {
       "_citationsMissing": true,
-      "after": "Create the minimal game scaffold:\n\n- `index.html` — a single HTML page with one `<script type=\"module\" src=\"src/main.js\"></script>` tag (the ES-module approach KAPLAY recommends for a no-bundler setup).\n- `src/main.js` — imports KAPLAY from a pinned CDN and initializes it:\n\n  ```js\n  import kaplay from \"https://unpkg.com/kaplay@3001.0.19/dist/kaplay.mjs\";\n  kaplay({ background: \"#1a1a1a\" });\n  ```\n\n  `kaplay()` starts KAPLAY's built-in render loop and creates a blank canvas. The dark background makes the canvas visible (proving it rendered) against the page background.\n\n`src/` is where the later files (map, actors, AI) will live.\n\nDone when: opening the page (served via `python3 -m http.server`) shows a blank dark canvas with no console errors.",
-      "before": "No game files exist yet. The repository contains only documentation and config (`README.md`, `PLAN.md`, `LICENSE.md`, `AGENTS.md`, `CLAUDE.md`) plus the `.claude/` and `resources/` directories. There is no `index.html` and no JavaScript. This is the first of eight roadmap items in `PLAN.md`.",
+      "after": "Add a \"## Running\" section after the intro. It will explain that the game is a static site with no build step, that it loads KAPLAY from a CDN and uses ES modules (so it must be served over HTTP rather than opened directly from the filesystem), and how to run it:\n\n    python3 -m http.server 8000\n\nthen open <http://localhost:8000> in a browser. Reload the page to generate a new map.",
+      "before": "`README.md` has a title, an intro, and an \"## Implementation\" list, but no instructions for running the program in its current state.",
+      "begunAtMs": 1791979637619,
       "citations": [],
       "feedback": "",
       "files": [
-        "index.html",
-        "src/main.js"
+        "README.md"
       ],
-      "id": "scaffold-engine",
-      "status": "proposed"
+      "id": "readme-run-instructions",
+      "status": "applied"
+    },
+    {
+      "_citationsMissing": true,
+      "after": "Append a \"Project conventions\" note to `CLAUDE.md` instructing that, after changing the code, the \"Running\" section of `README.md` be updated so it always reflects how to run the program in its current state.",
+      "before": "The project's `CLAUDE.md` contains only the `@.claude/bram-conventions.md` import. There is no instruction to keep documentation in sync with code changes.",
+      "begunAtMs": 1791979637619,
+      "citations": [],
+      "feedback": "",
+      "files": [
+        "CLAUDE.md"
+      ],
+      "id": "claude-md-run-sync-note",
+      "status": "applied"
     }
   ],
-  "issuedAtMs": 1791971532392,
+  "issuedAtMs": 1791979712000,
   "source": "worklist-action-command",
-  "consumedAtMs": 1791971557206,
+  "consumedAtMs": 1791979723893,
   "interruptedAtMs": null,
-  "commitToo": true
+  "commitToo": false
 }
