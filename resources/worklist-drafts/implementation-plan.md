@@ -1,0 +1,22 @@
+# Before
+
+No implementation plan exists. `README.md` describes the game ("Save the Humans!") at a high level, but there is no breakdown into discrete, independently-implementable steps. Development will span multiple sessions, one worklist item at a time.
+
+# After
+
+Create `PLAN.md` capturing the implementation roadmap, so it survives across sessions and is the source of truth for sequencing. It will contain:
+
+- **Engine decision:** KAPLAY (formerly Kaboom.js), loaded via a pinned CDN for now (no vendored copy — avoids committing a large opaque minified blob; npm + bundler deferred to the later packaging step).
+- **Key design assumptions:**
+  - Grid-based discrete movement: an actor occupies a cell and steps orthogonally; speed = move interval per actor kind.
+  - All tunable values centralized in one config object (speeds, infection time, flee/chase/pet ranges) for easy playtesting.
+- **Eight worklist items** in dependency order, each with a one-line goal and a "done when" acceptance check:
+
+1. `scaffold-engine` — single `index.html` + engine + empty game loop + blank canvas.
+2. `map-grid-generator` — grid/cell classes, random connected map with one border Exit, rendering.
+3. `actor-classes` — `Actor` base + `Zombie`/`Human`/`Tiger`/`Bunny`, random placement, circled-letter rendering.
+4. `player-control` — WASD (tiger) / IJKL (bunny) input + obstacle-blocked movement.
+5. `zombie-ai` — zombies move toward the nearest human.
+6. `infection` — contact infects a human; timed conversion to a zombie.
+7. `human-ai` — seek exit, flee/panic from tiger, chase/pet bunny.
+8. `endgame-tuning` — end conditions, score, restart, centralize tunables.
