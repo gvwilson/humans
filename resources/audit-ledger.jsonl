@@ -18,3 +18,5 @@
 {"applyAndCommit":true,"at":"2026-10-14T18:44:44.985Z","atMs":1792003484985,"decision":"approved","itemIds":["zombie-ai"],"kind":"authorization","source":"worklist-action-command"}
 {"at":"2026-10-14T18:47:42.384Z","atMs":1792003662384,"authorization":"apply-and-commit","branch":"main","itemIds":["zombie-ai"],"kind":"commit","sha":"ff4d3e37b740e9459a34126d09902ab9de6fd86d","stagedPaths":["src/map.js","src/main.js"]}
 {"applyAndCommit":true,"at":"2026-10-14T21:26:49.345Z","atMs":1792013209345,"decision":"approved","itemIds":["infection"],"kind":"authorization","source":"worklist-action-command"}
+{"at":"2026-10-14T21:30:46.109Z","atMs":1792013446109,"authorization":"apply-and-commit","branch":"main","itemIds":["infection"],"kind":"commit","sha":"d229beaef93d847ee323f7a5db3173a7e445e088","stagedPaths":["src/main.js"]}
+{"applyAndCommit":false,"at":"2026-10-14T21:32:40.115Z","atMs":1792013560115,"decision":"direct-edit","itemIds":[],"kind":"authorization","provider":"claude","source":"bram-guard-opt-out"}

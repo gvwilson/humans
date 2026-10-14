@@ -20,7 +20,7 @@
   ],
   "issuedAtMs": 1792013209343,
   "source": "worklist-action-command",
-  "consumedAtMs": null,
+  "consumedAtMs": 1792013446267,
   "interruptedAtMs": null,
   "commitToo": true
 }

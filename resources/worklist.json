@@ -1,15 +1,5 @@
 {
   "description": "",
-  "items": [
-    {
-      "begunAtMs": 1792013209345,
-      "files": [
-        "src/main.js",
-        "resources/"
-      ],
-      "id": "infection",
-      "status": "proposed"
-    }
-  ],
-  "version": 30
+  "items": [],
+  "version": 31
 }
