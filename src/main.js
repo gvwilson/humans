@@ -1,27 +1,21 @@
-import kaplay from "https://unpkg.com/kaplay@3001.0.19/dist/kaplay.mjs";
-import {
-  generateMap,
-  nextStepToward,
-  CellType,
-  GRID_ROWS,
-  GRID_COLS,
-  CELL_SIZE,
-} from "./map.js";
-import { spawnActors, Tiger, Bunny, Zombie, Human } from "./actors.js";
-import { CONFIG } from "./config.js";
+import kaplay from 'https://unpkg.com/kaplay@3001.0.19/dist/kaplay.mjs';
+import { generateMap, nextStepToward, CellType, GRID_ROWS, GRID_COLS, CELL_SIZE } from './map.js';
+import { spawnActors, Tiger, Bunny, Zombie, Human } from './actors.js';
+import { CONFIG } from './config.js';
 
-kaplay({
-  background: "#1a1a1a",
-  width: GRID_COLS * CELL_SIZE,
-  height: GRID_ROWS * CELL_SIZE,
-});
+const { add, rect, pos, color, circle, outline, anchor, text, vec2, onUpdate, dt, isKeyDown } =
+  kaplay({
+    background: '#1a1a1a',
+    width: GRID_COLS * CELL_SIZE,
+    height: GRID_ROWS * CELL_SIZE,
+  });
 
 const { grid, exit } = generateMap();
 
 const CELL_COLORS = {
-  [CellType.PATH]: "#4a4a4a",
-  [CellType.OBSTACLE]: "#000000",
-  [CellType.EXIT]: "#00e676",
+  [CellType.PATH]: '#4a4a4a',
+  [CellType.OBSTACLE]: '#000000',
+  [CellType.EXIT]: '#00e676',
 };
 
 for (let r = 0; r < GRID_ROWS; r++) {
@@ -36,7 +30,7 @@ for (let r = 0; r < GRID_ROWS; r++) {
 
 const ACTOR_RADIUS = CELL_SIZE / 2 - 3; // inset so circles sit inside their cells
 const ACTOR_TEXT_SIZE = CELL_SIZE / 2;
-const INFECTED_TEXT_COLOR = "#ff1744"; // text color for infected humans
+const INFECTED_TEXT_COLOR = '#ff1744'; // text color for infected humans
 
 const TIGER_KEYS = { w: [-1, 0], a: [0, -1], s: [1, 0], d: [0, 1] };
 const BUNNY_KEYS = { i: [-1, 0], j: [0, -1], k: [1, 0], l: [0, 1] };
@@ -50,15 +44,15 @@ function renderActor(actor) {
   const circleObj = add([
     circle(ACTOR_RADIUS),
     color(actor.color),
-    outline(2, "#000000"),
+    outline(2, '#000000'),
     pos(x, y),
-    anchor("center"),
+    anchor('center'),
   ]);
   const textObj = add([
     text(actor.letter, { size: ACTOR_TEXT_SIZE }),
     color(actor.textColor),
     pos(x, y),
-    anchor("center"),
+    anchor('center'),
   ]);
   actor.sprites = [circleObj, textObj];
 }
@@ -146,7 +140,7 @@ function markInfected(human) {
     text(human.letter, { size: ACTOR_TEXT_SIZE }),
     color(INFECTED_TEXT_COLOR),
     pos(x, y),
-    anchor("center"),
+    anchor('center'),
   ]);
 }
 
@@ -164,30 +158,25 @@ function endGame() {
   const won = saved > CONFIG.humanCount / 2;
   const cx = (GRID_COLS * CELL_SIZE) / 2;
   const cy = (GRID_ROWS * CELL_SIZE) / 2;
+  add([rect(GRID_COLS * CELL_SIZE, GRID_ROWS * CELL_SIZE), color('#000000'), pos(0, 0)]);
   add([
-    rect(GRID_COLS * CELL_SIZE, GRID_ROWS * CELL_SIZE),
-    color("#000000"),
-    pos(0, 0),
-  ]);
-  add([
-    text(
-      `You ${won ? "win" : "lose"} — saved ${saved} of ${CONFIG.humanCount} humans`,
-      { size: 28 }
-    ),
-    color(won ? "#00e676" : "#ff1744"),
+    text(`You ${won ? 'win' : 'lose'} — saved ${saved} of ${CONFIG.humanCount} humans`, {
+      size: 28,
+    }),
+    color(won ? '#00e676' : '#ff1744'),
     pos(cx, cy - 20),
-    anchor("center"),
+    anchor('center'),
   ]);
   add([
-    text("Press R to restart", { size: 16 }),
-    color("#cccccc"),
+    text('Press R to restart', { size: 16 }),
+    color('#cccccc'),
     pos(cx, cy + 20),
-    anchor("center"),
+    anchor('center'),
   ]);
 }
 
-window.addEventListener("keydown", (e) => {
-  if (gameOver && e.key.toLowerCase() === "r") location.reload();
+window.addEventListener('keydown', (e) => {
+  if (gameOver && e.key.toLowerCase() === 'r') location.reload();
 });
 
 onUpdate(() => {
@@ -247,7 +236,7 @@ onUpdate(() => {
       }
       const dTiger = manhattan(human, tiger);
       const dBunny = manhattan(human, bunny);
-      let step = null;
+      let step;
       if (dTiger <= CONFIG.tigerPanicRange) {
         step = randomStep(human);
       } else if (dTiger <= CONFIG.tigerFleeRange) {

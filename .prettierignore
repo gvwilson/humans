@@ -1,0 +1,6 @@
+# Exclude everywhere
+**/*.json
+**/*.md
+
+# Bram worklist infrastructure — machine-managed, never reformat
+resources/

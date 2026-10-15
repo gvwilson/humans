@@ -1,5 +1,5 @@
-import { CellType } from "./map.js";
-import { CONFIG } from "./config.js";
+import { CellType } from './map.js';
+import { CONFIG } from './config.js';
 
 export class Actor {
   constructor(r, c) {
@@ -22,59 +22,59 @@ export class Actor {
   }
 
   get letter() {
-    return "?";
+    return '?';
   }
 
   get color() {
-    return "#ffffff";
+    return '#ffffff';
   }
 
   get textColor() {
-    return "#ffffff";
+    return '#ffffff';
   }
 }
 
 export class Zombie extends Actor {
   get letter() {
-    return "Z";
+    return 'Z';
   }
 
   get color() {
-    return "#2e7d32";
+    return '#2e7d32';
   }
 }
 
 export class Human extends Actor {
   get letter() {
-    return "H";
+    return 'H';
   }
 
   get color() {
-    return "#fdd835";
+    return '#fdd835';
   }
 
   get textColor() {
-    return "#000000";
+    return '#000000';
   }
 }
 
 export class Tiger extends Actor {
   get letter() {
-    return "T";
+    return 'T';
   }
 
   get color() {
-    return "#e65100";
+    return '#e65100';
   }
 }
 
 export class Bunny extends Actor {
   get letter() {
-    return "B";
+    return 'B';
   }
 
   get color() {
-    return "#d81b60";
+    return '#d81b60';
   }
 }
 

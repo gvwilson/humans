@@ -1,7 +1,7 @@
 export const CellType = Object.freeze({
-  PATH: "path",
-  OBSTACLE: "obstacle",
-  EXIT: "exit",
+  PATH: 'path',
+  OBSTACLE: 'obstacle',
+  EXIT: 'exit',
 });
 
 export const GRID_ROWS = 15;
@@ -19,7 +19,12 @@ export function generateMap(rows = GRID_ROWS, cols = GRID_COLS) {
   const visited = new Set([cellKey(1, 1, cols)]);
   grid[1][1] = CellType.PATH;
   const stack = [[1, 1]];
-  const dirs = [[-2, 0], [2, 0], [0, -2], [0, 2]];
+  const dirs = [
+    [-2, 0],
+    [2, 0],
+    [0, -2],
+    [0, 2],
+  ];
 
   while (stack.length > 0) {
     const [r, c] = stack[stack.length - 1];
@@ -69,7 +74,12 @@ export function nextStepToward(grid, startR, startC, isTarget) {
   const key = (r, c) => r * cols + c;
   const firstStep = new Map([[key(startR, startC), null]]);
   const queue = [[startR, startC]];
-  const dirs = [[-1, 0], [1, 0], [0, -1], [0, 1]];
+  const dirs = [
+    [-1, 0],
+    [1, 0],
+    [0, -1],
+    [0, 1],
+  ];
 
   for (let head = 0; head < queue.length; head++) {
     const [r, c] = queue[head];
