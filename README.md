@@ -25,26 +25,3 @@ From the project root, run:
 
 then open <http://localhost:8000> in a browser. Reload the page to generate a
 new map.
-
-## Implementation
-
--   Choose a lightweight open source JavaScript game engine.
--   Create classes to represent four kinds of actors: zombies, humans, the
-    tiger, and the bunny. (Other kinds of animals will be added later.)
--   Create a random map generator. The map is an orthogonal grid. Each cell is
-    either an obstacle or a path. All paths are connected, and are connected to
-    a single Exit cell on the border of the grid. For now, obstacles are just
-    obstacles: actors cannot move into obstacle cells, only into path cells.
--   The player controls two animals as described earlier.
--   Animals, zombies, and humans are placed randomly on the map at the start.
--   The game ends when all humans have exited or been infected.
--   A human is infected when a zombie catches it. Infection takes some time. We
-    will experiment with how long infection takes as part of playtesting.
--   Different actors move at different speeds, but all actors of the same kind
-    move at the same speed. We will experiment with different speeds as part of
-    playtesting.
--   We will add sound effects and graphic icons later. For now, use simple
-    markers such as circled charactors to show each actor, e.g., an 'H' in a
-    circle for a human or a 'Z' in a circle for a zombie.
--   For now, create a single HTML page that loads all of the JavaScript files.
-    We will worry about bundling and packaging for distribution later.
